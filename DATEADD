@@ -1,0 +1,11 @@
+//If you are working with a date time field in T-SQL you may run into an issue where you need to find all related data within 10 minutes of that that time stamp for example  '2018-12-05 14:29:48.947' but you need both 10 minutes before and after this.
+//You can achieve this with DATEADD function which lets you perform math on specific time increments of your choosing, see example using a where clause to get stuff 10 minutes before and 10 minutes after as a range of time.
+
+select se.created_by, se.sig_msg, se.source1_id, se.create_timestamp as SECreateTimeStamp, aa2.AuditDate as TargetTimestamp
+from sig_events se , Audit_account2 aa2
+where se.sig_msg = 'Account accessed'
+and se.source1_id = aa2.accountID 
+and se.create_timestamp > DATEADD(minute,-10,aa2.AuditDate) 
+and se.create_timestamp < DATEADD(minute,10,aa2.AuditDate) 
+
+//I am using the last 2 lines here to get all sig events that were created 10 minutes before (with a -10) and not more than 10 minutes after the time stamp.
